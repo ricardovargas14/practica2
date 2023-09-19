@@ -1,12 +1,15 @@
+import java.awt.Graphics;
+
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * Esta clase es la que se encarga de mostrar las cartas en el tablero.
  */
-public class JCarta extends JLabel {
+public class JCarta extends JPanel {
 
     private Carta carta;
+    private ImageIcon imagenCarta;
     
     public JCarta(Carta carta) {
         super();
@@ -15,13 +18,13 @@ public class JCarta extends JLabel {
     }
 
     private void cargarImagen() {
-        String ruta = "src/img/";
+        String ruta = System.getProperty("user.dir") + "/src/img/";
         if (carta.getPalo() == Palo.joker) {
             ruta += "joker.png";
         } else {
             ruta += carta.getValor() + "-" + carta.getPalo() + ".png";
         }
-        setIcon(new ImageIcon(ruta));
+        imagenCarta = new ImageIcon(ruta);
         System.out.println(ruta);
     }
 
@@ -30,7 +33,15 @@ public class JCarta extends JLabel {
     }
 
     public void setCarta(Carta carta) {
-        this.carta = carta;        
-        setIcon(new ImageIcon("src/img/" + carta.getPalo() + carta.getValor() + ".png"));
+        this.carta = carta;
+        cargarImagen();
     }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        g.drawImage(imagenCarta.getImage(), 0, 0, getWidth(), getHeight(), this);
+    }    
+
 }

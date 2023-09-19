@@ -10,7 +10,6 @@ public enum Palo {
     estrella("amarillo"),
     joker(null);
 
-
     private String color;
 
     private Palo(String color) {
@@ -21,5 +20,5 @@ public enum Palo {
         return color;
     }
 
-    
+
 }

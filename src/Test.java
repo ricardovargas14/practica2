@@ -13,12 +13,12 @@ public class Test {
         JCarta jCarta = new JCarta(baraja.removerCarta());
         
         JFrame frame = new JFrame();
+        frame.setSize(500, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new FlowLayout());
-        frame.add(jCarta);
-        frame.pack();
+        frame.setLayout(new BorderLayout());
+        frame.add(jCarta, BorderLayout.CENTER);
         frame.setVisible(true);
-        
+
 
     }
 
