@@ -1,4 +1,5 @@
 import java.awt.Graphics;
+import java.awt.Image;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -41,7 +42,33 @@ public class JCarta extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        g.drawImage(imagenCarta.getImage(), 0, 0, getWidth(), getHeight(), this);
-    }    
+        int anchoPanel = getWidth();
+        int altoPanel = getHeight();
 
+        // Obtiene la imagen original
+        Image imgOriginal = imagenCarta.getImage();
+        int anchoOriginal = imgOriginal.getWidth(this);
+        int altoOriginal = imgOriginal.getHeight(this);
+
+        // Calcula el nuevo ancho y alto manteniendo la relación de aspecto
+        int nuevoAncho = anchoOriginal;
+        int nuevoAlto = altoOriginal;
+
+        if (anchoOriginal > anchoPanel) {
+            nuevoAncho = anchoPanel;
+            nuevoAlto = (int) (nuevoAncho * ((double) altoOriginal / anchoOriginal));
+        }
+
+        if (nuevoAlto > altoPanel) {
+            nuevoAlto = altoPanel;
+            nuevoAncho = (int) (nuevoAlto * ((double) anchoOriginal / altoOriginal));
+        }
+
+        // Centra la imagen en el panel
+        int x = (anchoPanel - nuevoAncho) / 2;
+        int y = (altoPanel - nuevoAlto) / 2;
+
+        // Escala y dibuja la imagen manteniendo la relación de aspecto
+        g.drawImage(imgOriginal, x, y, nuevoAncho, nuevoAlto, this);
+    }
 }
