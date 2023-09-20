@@ -56,6 +56,14 @@ public class Baraja {
     }
 
     /**
+     * Método que agrega una carta a la baraja.
+     * @param carta Carta a agregar.
+     */
+    public void agregarCarta(Carta carta) {
+        cartas.add(carta);
+    }
+
+    /**
      * Método que regresa la baraja de cartas.
      * @return Baraja de cartas.
      */

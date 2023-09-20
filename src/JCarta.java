@@ -19,6 +19,7 @@ public class JCarta extends JPanel {
     public JCarta(Carta carta) {
         super();
         this.carta = carta;
+        this.setOpaque(false);
         cargarImagen();
     }
 
@@ -33,7 +34,6 @@ public class JCarta extends JPanel {
             ruta += carta.getValor() + "-" + carta.getPalo() + ".png";
         }
         imagenCarta = new ImageIcon(ruta);
-        System.out.println(ruta);
     }
 
     /**
