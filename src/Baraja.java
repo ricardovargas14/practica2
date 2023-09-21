@@ -51,7 +51,7 @@ public class Baraja {
      * Método que remueve la primera carta de la baraja.
      * @return Carta removida.
      */
-    public Carta removerCarta() {
+    public Carta tomarCarta() {
         return cartas.remove(0);
     }
 
