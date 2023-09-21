@@ -6,6 +6,7 @@ public class GUI extends JFrame {
     private JPanel panelMazos;
     private JPanel panelMazoOriginal;
     private JPanel panelMazoControlado;
+    private JButton buttonMezclarMazo;
 
     // Panel de control:
     private JPanel panelControl;
@@ -53,6 +54,15 @@ public class GUI extends JFrame {
         actualizarPaneles();
     }
 
+    /**
+     * Este método crea una baraja de completa de 58 cartas, extrae 10 cartas de
+     * la baraja y las guarda en el mazo original.
+     * 
+     * También crea un mazo vacío que se usará para guardar las cartas que se
+     * remueven.
+     * 
+     * Esto después se cambiara para que utilice pilas en vez de barajas.
+     */
     private void crearCartas() {
         Baraja baraja = new Baraja();
         baraja.crearBaraja();
@@ -66,6 +76,9 @@ public class GUI extends JFrame {
         mazoControlado = new Baraja();
     }
 
+    /**
+     * Este método crea los paneles que se van a mostrar en la ventana.
+     */
     private void crearPaneles() {
         // Panel de control:
         panelControl = new JPanel();
@@ -130,21 +143,38 @@ public class GUI extends JFrame {
 
         GridLayout layoutBaraja = new GridLayout(1, 0);
         int altoPanelBaraja = getSize().height / 2;
-        // Panel del mazo original:
+        // Panel de los mazos -> Panel del mazo original:
+        JPanel panelContenedorMazoOriginal = new JPanel();
+        panelContenedorMazoOriginal.setLayout(new BoxLayout(panelContenedorMazoOriginal, BoxLayout.Y_AXIS));
+        panelContenedorMazoOriginal.setBorder(BorderFactory.createTitledBorder("Mazo"));
+        panelContenedorMazoOriginal.setPreferredSize(new Dimension(0, altoPanelBaraja));
         panelMazoOriginal = new JPanel();
         panelMazoOriginal.setLayout(layoutBaraja);
-        panelMazoOriginal.setPreferredSize(new Dimension(0, altoPanelBaraja));
-        panelMazos.add(panelMazoOriginal);
+        panelContenedorMazoOriginal.add(panelMazoOriginal);
+        panelMazos.add(panelContenedorMazoOriginal);
 
-        // Panel del mazo controlado:
+        // Panel de los mazos -> Panel del mazo original -> Botón de mezclar mazo:
+        buttonMezclarMazo = new JButton("Mezclar mazo");
+        buttonMezclarMazo.addActionListener(e -> {
+            mazoOriginal.barajar();
+            actualizarPaneles();
+        });
+        buttonMezclarMazo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panelContenedorMazoOriginal.add(buttonMezclarMazo);
+
+        // Panel de los mazos -> Panel del mazo controlado:
         panelMazoControlado = new JPanel();
         panelMazoControlado.setLayout(layoutBaraja);
+        panelMazoControlado.setBorder(BorderFactory.createTitledBorder("Cartas removidas"));
         panelMazoControlado.setPreferredSize(new Dimension(0, altoPanelBaraja));
         panelMazos.add(panelMazoControlado);
 
         revalidate();
     }
 
+    /**
+     * Listener del botón de actualizar que se encuentra en el panel de control.
+     */
     private void listener() {
         mazoControlado = new Baraja();
 
@@ -214,13 +244,13 @@ public class GUI extends JFrame {
         // Se actualiza el panel mazo original:
         panelMazoOriginal.removeAll();
         for (Carta carta : mazoOriginal.getCartas()) {
-            panelMazoOriginal.add(new JCarta(carta));
+            panelMazoOriginal.add(new CartaGUI(carta));
         }
 
         // Se actualiza el panel mazo controlado:
         panelMazoControlado.removeAll();
         for (Carta carta : mazoControlado.getCartas()) {
-            panelMazoControlado.add(new JCarta(carta));
+            panelMazoControlado.add(new CartaGUI(carta));
         }
 
         repaint();
