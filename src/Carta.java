@@ -56,5 +56,15 @@ public class Carta {
         return palo + " " + valor;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Carta) {
+            Carta carta = (Carta) obj;
+            return carta.getValor() == this.valor && carta.getPalo() == this.palo;
+        }
+        return false;
+    }
+
+    
     
 }
