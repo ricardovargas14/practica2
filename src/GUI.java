@@ -6,6 +6,7 @@ public class GUI extends JFrame {
     private JPanel panelMazos;
     private JPanel panelMazoOriginal;
     private JPanel panelMazoControlado;
+    private JPanel panelCartasRemovidas;
     private JButton buttonMezclarMazo;
 
     // Panel de control:
@@ -41,6 +42,7 @@ public class GUI extends JFrame {
 
     private Baraja mazoOriginal;
     private Baraja mazoControlado;
+    private Baraja cartasRemovidas;
 
     public GUI() {
         super("Cartas Five Crowns");
@@ -74,6 +76,9 @@ public class GUI extends JFrame {
         }
 
         mazoControlado = new Baraja();
+        mazoControlado.setCartas(mazoOriginal.getCartas());
+
+        cartasRemovidas = new Baraja();
     }
 
     /**
@@ -142,32 +147,44 @@ public class GUI extends JFrame {
         add(panelMazos, BorderLayout.CENTER);
 
         GridLayout layoutBaraja = new GridLayout(1, 0);
-        int altoPanelBaraja = getSize().height / 2;
+        Dimension dimensionPanel = new Dimension(0, this.getSize().height / 3);
+
+
         // Panel de los mazos -> Panel del mazo original:
-        JPanel panelContenedorMazoOriginal = new JPanel();
-        panelContenedorMazoOriginal.setLayout(new BoxLayout(panelContenedorMazoOriginal, BoxLayout.Y_AXIS));
-        panelContenedorMazoOriginal.setBorder(BorderFactory.createTitledBorder("Mazo"));
-        panelContenedorMazoOriginal.setPreferredSize(new Dimension(0, altoPanelBaraja));
         panelMazoOriginal = new JPanel();
         panelMazoOriginal.setLayout(layoutBaraja);
-        panelContenedorMazoOriginal.add(panelMazoOriginal);
-        panelMazos.add(panelContenedorMazoOriginal);
+        panelMazoOriginal.setBorder(BorderFactory.createTitledBorder("Mazo original"));
+        panelMazoOriginal.setPreferredSize(dimensionPanel);
+        panelMazos.add(panelMazoOriginal);
 
-        // Panel de los mazos -> Panel del mazo original -> Botón de mezclar mazo:
+        // Panel de los mazos -> Panel del mazo controlado:
+        JPanel panelContenedorMazoControlado = new JPanel();
+        panelContenedorMazoControlado.setLayout(new BoxLayout(panelContenedorMazoControlado, BoxLayout.Y_AXIS));
+        panelContenedorMazoControlado.setBorder(BorderFactory.createTitledBorder("Mazo controlado"));
+        panelContenedorMazoControlado.setPreferredSize(dimensionPanel);
+        panelMazoControlado = new JPanel();
+        panelMazoControlado.setLayout(layoutBaraja);
+        panelContenedorMazoControlado.add(panelMazoControlado);
+        panelMazos.add(panelContenedorMazoControlado);
+        
+        // Panel de los mazos -> Panel del mazo controlado -> Botón de mezclar mazo:
         buttonMezclarMazo = new JButton("Mezclar mazo");
+
+        // Esto hay que modificarlo...
         buttonMezclarMazo.addActionListener(e -> {
             mazoOriginal.barajar();
             actualizarPaneles();
         });
-        buttonMezclarMazo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panelContenedorMazoOriginal.add(buttonMezclarMazo);
 
-        // Panel de los mazos -> Panel del mazo controlado:
-        panelMazoControlado = new JPanel();
-        panelMazoControlado.setLayout(layoutBaraja);
-        panelMazoControlado.setBorder(BorderFactory.createTitledBorder("Cartas removidas"));
-        panelMazoControlado.setPreferredSize(new Dimension(0, altoPanelBaraja));
-        panelMazos.add(panelMazoControlado);
+        buttonMezclarMazo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panelContenedorMazoControlado.add(buttonMezclarMazo);
+
+        // Panel de los mazos -> Panel de las cartas removidas:
+        panelCartasRemovidas = new JPanel();
+        panelCartasRemovidas.setLayout(layoutBaraja);
+        panelCartasRemovidas.setBorder(BorderFactory.createTitledBorder("Cartas removidas"));
+        panelCartasRemovidas.setPreferredSize(dimensionPanel);
+        panelMazos.add(panelCartasRemovidas);
 
         revalidate();
     }
@@ -176,16 +193,18 @@ public class GUI extends JFrame {
      * Listener del botón de actualizar que se encuentra en el panel de control.
      */
     private void listener() {
-        mazoControlado = new Baraja();
+        // mazoControlado = new Baraja();
 
         // por valor:
         for (Component component : panelNumero.getComponents()) {
             JCheckBox checkBox = (JCheckBox) component;
             if (checkBox.isSelected()) {
                 int numero = Integer.parseInt(checkBox.getText());
-                for (Carta carta : mazoOriginal.getCartas()) {
+                for (int i = 0; i < mazoControlado.getCantidadDeCartas(); i++) {
+                    Carta carta = mazoControlado.getCartas().get(i);
                     if (carta.getValor() == numero) {
-                        mazoControlado.agregarCarta(carta);
+                        cartasRemovidas.agregarCarta(carta);
+                        System.out.println(carta);
                     }
                 }
             }
@@ -196,13 +215,17 @@ public class GUI extends JFrame {
             JCheckBox checkBox = (JCheckBox) component;
             if (checkBox.isSelected()) {
                 String figura = checkBox.getText();
-                for (Carta carta : mazoOriginal.getCartas()) {
+                for (int i = 0; i < mazoControlado.getCantidadDeCartas(); i++) {
+                    Carta carta = mazoControlado.getCartas().get(i);
                     if (carta.getValor() == 11 && figura.equals("J")) {
-                        mazoControlado.agregarCarta(carta);
+                        cartasRemovidas.agregarCarta(carta);
+                        System.out.println(carta);
                     } else if (carta.getValor() == 12 && figura.equals("Q")) {
-                        mazoControlado.agregarCarta(carta);
+                        cartasRemovidas.agregarCarta(carta);
+                        System.out.println(carta);
                     } else if (carta.getValor() == 13 && figura.equals("K")) {
-                        mazoControlado.agregarCarta(carta);
+                        cartasRemovidas.agregarCarta(carta);
+                        System.out.println(carta);
                     }
                 }
             }
@@ -213,9 +236,11 @@ public class GUI extends JFrame {
             JCheckBox checkBox = (JCheckBox) component;
             if (checkBox.isSelected()) {
                 String color = checkBox.getText();
-                for (Carta carta : mazoOriginal.getCartas()) {
+                for (int i = 0; i < mazoControlado.getCantidadDeCartas(); i++) {
+                    Carta carta = mazoControlado.getCartas().get(i);
                     if (carta.getValor() != 0 && carta.getColor().equalsIgnoreCase(color)) {
-                        mazoControlado.agregarCarta(carta);
+                        cartasRemovidas.agregarCarta(carta);
+                        System.out.println(carta);
                     }
                 }
             }
@@ -226,11 +251,14 @@ public class GUI extends JFrame {
             JCheckBox checkBox = (JCheckBox) component;
             if (checkBox.isSelected()) {
                 String tipo = checkBox.getText();
-                for (Carta carta : mazoOriginal.getCartas()) {
+                for (int i = 0; i < mazoControlado.getCantidadDeCartas(); i++) {
+                    Carta carta = mazoControlado.getCartas().get(i);
                     if (carta.getValor() == 0 && tipo.equals("Joker")) {
-                        mazoControlado.agregarCarta(carta);
+                        cartasRemovidas.agregarCarta(carta);
+                        System.out.println(carta);
                     } else if (carta.getValor() != 0 && tipo.equals("Normal")) {
-                        mazoControlado.agregarCarta(carta);
+                        cartasRemovidas.agregarCarta(carta);
+                        System.out.println(carta);
                     }
                 }
             }
@@ -243,14 +271,23 @@ public class GUI extends JFrame {
     private void actualizarPaneles() {
         // Se actualiza el panel mazo original:
         panelMazoOriginal.removeAll();
-        for (Carta carta : mazoOriginal.getCartas()) {
+        for (int i = 0; i < mazoOriginal.getCantidadDeCartas(); i++) {
+            Carta carta = mazoOriginal.getCartas().get(i);
             panelMazoOriginal.add(new CartaGUI(carta));
         }
 
         // Se actualiza el panel mazo controlado:
         panelMazoControlado.removeAll();
-        for (Carta carta : mazoControlado.getCartas()) {
-            panelMazoControlado.add(new CartaGUI(carta));
+        panelCartasRemovidas.removeAll();
+        System.out.println(cartasRemovidas);
+        for (int i = 0; i < mazoOriginal.getCantidadDeCartas(); i++) {
+            Carta carta = mazoOriginal.getCartas().get(i);
+            if (cartasRemovidas.getCartas().contains(carta)) {
+                panelCartasRemovidas.add(new CartaGUI(carta));
+            }
+            else {
+                panelMazoControlado.add(new CartaGUI(carta));
+            }
         }
 
         repaint();
